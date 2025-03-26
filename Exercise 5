@@ -1,0 +1,116 @@
+-- Creating Bank Table
+CREATE TABLE Bank (
+    bk_code NUMBER PRIMARY KEY,
+    bk_name VARCHAR2(100) NOT NULL,
+    bk_address VARCHAR2(200)
+);
+
+-- Creating Branch Table
+CREATE TABLE Branch (
+    br_id NUMBER PRIMARY KEY,
+    br_name VARCHAR2(100) NOT NULL,
+    br_address VARCHAR2(200),
+    bk_code NUMBER NOT NULL,
+    FOREIGN KEY (bk_code) REFERENCES Bank(bk_code) ON DELETE CASCADE
+);
+
+-- Creating Customer Table
+CREATE TABLE Customer (
+    cust_ID NUMBER PRIMARY KEY,
+    cust_name VARCHAR2(100) NOT NULL,
+    phone_no VARCHAR2(15) UNIQUE NOT NULL,
+    address VARCHAR2(200)
+);
+
+-- Creating Account Table
+CREATE TABLE Account (
+    acc_no NUMBER PRIMARY KEY,
+    acc_type VARCHAR2(50) CHECK (acc_type IN ('savings', 'current', 'fixed')),
+    balance NUMBER CHECK (balance >= 0),
+    br_id NUMBER NOT NULL,
+    FOREIGN KEY (br_id) REFERENCES Branch(br_id) ON DELETE CASCADE
+);
+
+-- Creating Customer_Account Table
+CREATE TABLE Customer_Account (
+    cust_ID NUMBER NOT NULL,
+    acc_no NUMBER NOT NULL,
+    PRIMARY KEY (cust_ID, acc_no),
+    FOREIGN KEY (cust_ID) REFERENCES Customer(cust_ID) ON DELETE CASCADE,
+    FOREIGN KEY (acc_no) REFERENCES Account(acc_no) ON DELETE CASCADE
+);
+
+-- Creating Loan Table
+CREATE TABLE Loan (
+    loan_ID NUMBER PRIMARY KEY,
+    loan_type VARCHAR2(50) CHECK (loan_type IN ('home', 'vehicle', 'education')),
+    amount NUMBER CHECK (amount >= 0),
+    br_id NUMBER NOT NULL,
+    FOREIGN KEY (br_id) REFERENCES Branch(br_id) ON DELETE CASCADE
+);
+
+-- Creating Customer_Loan Table
+CREATE TABLE Customer_Loan (
+    cust_ID NUMBER NOT NULL,
+    loan_ID NUMBER NOT NULL,
+    PRIMARY KEY (cust_ID, loan_ID),
+    FOREIGN KEY (cust_ID) REFERENCES Customer(cust_ID) ON DELETE CASCADE,
+    FOREIGN KEY (loan_ID) REFERENCES Loan(loan_ID) ON DELETE CASCADE
+);
+
+-- Inserting Sample Data
+-- Inserting into Bank Table
+INSERT INTO Bank VALUES (1, 'State Bank', 'MG Road');
+INSERT INTO Bank VALUES (2, 'HDFC Bank', 'NITK');
+INSERT INTO Bank VALUES (3, 'ICICI Bank', 'Surathkal');
+INSERT INTO Bank VALUES (4, 'Canara Bank', 'Mangalore');
+INSERT INTO Bank VALUES (5, 'Axis Bank', 'Bangalore');
+
+-- Inserting into Branch Table
+INSERT INTO Branch VALUES (1, 'MG Road Branch', 'MG Road', 1);
+INSERT INTO Branch VALUES (2, 'NITK Branch', 'NITK', 2);
+INSERT INTO Branch VALUES (3, 'Surathkal Branch', 'Surathkal', 3);
+INSERT INTO Branch VALUES (4, 'Mangalore Branch', 'Mangalore', 4);
+INSERT INTO Branch VALUES (5, 'Bangalore Branch', 'Bangalore', 5);
+
+-- Inserting into Customer Table
+INSERT INTO Customer VALUES (101, 'Ravi', '9876543210', 'Udupi');
+INSERT INTO Customer VALUES (102, 'Meena', '9123456789', 'Mangalore');
+INSERT INTO Customer VALUES (103, 'Ajay', '9234567890', 'Surathkal');
+INSERT INTO Customer VALUES (104, 'Priya', '9345678901', 'Bangalore');
+INSERT INTO Customer VALUES (105, 'Kiran', '9456789012', 'MG Road');
+
+-- Inserting into Account Table
+INSERT INTO Account VALUES (1001, 'savings', 15000, 1);
+INSERT INTO Account VALUES (1002, 'current', 25000, 2);
+INSERT INTO Account VALUES (1003, 'fixed', 50000, 3);
+INSERT INTO Account VALUES (1004, 'savings', 1000, 4);
+INSERT INTO Account VALUES (1005, 'current', 7000, 5);
+
+-- Inserting into Customer_Account Table
+INSERT INTO Customer_Account VALUES (101, 1001);
+INSERT INTO Customer_Account VALUES (102, 1002);
+INSERT INTO Customer_Account VALUES (103, 1003);
+INSERT INTO Customer_Account VALUES (104, 1004);
+INSERT INTO Customer_Account VALUES (105, 1005);
+
+-- Inserting into Loan Table
+INSERT INTO Loan VALUES (2001, 'home', 500000, 1);
+INSERT INTO Loan VALUES (2002, 'vehicle', 300000, 2);
+INSERT INTO Loan VALUES (2003, 'education', 200000, 3);
+INSERT INTO Loan VALUES (2004, 'home', 400000, 4);
+INSERT INTO Loan VALUES (2005, 'vehicle', 100000, 5);
+
+-- Inserting into Customer_Loan Table
+INSERT INTO Customer_Loan VALUES (101, 2001);
+INSERT INTO Customer_Loan VALUES (102, 2002);
+INSERT INTO Customer_Loan VALUES (103, 2003);
+INSERT INTO Customer_Loan VALUES (104, 2004);
+INSERT INTO Customer_Loan VALUES (105, 2005);
+
+-- Additional Instructions
+-- Add NOMINEE Column to Customer Table
+ALTER TABLE Customer ADD NOMINEE VARCHAR2(50);
+
+-- Set Integrity Constraints for New NOMINEE Column
+ALTER TABLE Customer MODIFY NOMINEE NULL;
