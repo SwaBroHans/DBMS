@@ -1,0 +1,103 @@
+-- Creating Employee Table
+CREATE TABLE Employee (
+    Fname VARCHAR2(50),
+    Mname VARCHAR2(50),
+    Lname VARCHAR2(50) NOT NULL,
+    Ssn NUMBER PRIMARY KEY,
+    Bdate DATE CHECK (Bdate < SYSDATE), -- Birth date must be in the past
+    Address VARCHAR2(200),
+    Gender CHAR(1) CHECK (Gender IN ('M', 'F')), -- Gender restricted to 'M' or 'F'
+    Salary NUMBER CHECK (Salary >= 0), -- Salary must be non-negative
+    Super_Ssn NUMBER,
+    Dept_num NUMBER NOT NULL,
+    FOREIGN KEY (Super_Ssn) REFERENCES Employee(Ssn) ON DELETE SET NULL,
+    FOREIGN KEY (Dept_num) REFERENCES Department(Dept_num) ON DELETE CASCADE
+);
+
+-- Creating Department Table
+CREATE TABLE Department (
+    Dept_num NUMBER PRIMARY KEY,
+    Dept_name VARCHAR2(100) UNIQUE NOT NULL,
+    Mgr_Ssn NUMBER,
+    Mgr_startdate DATE CHECK (Mgr_startdate < SYSDATE), -- Start date must be in the past
+    FOREIGN KEY (Mgr_Ssn) REFERENCES Employee(Ssn) ON DELETE SET NULL
+);
+
+-- Creating Department_Locations Table
+CREATE TABLE Department_Locations (
+    Dept_num NUMBER NOT NULL,
+    Location VARCHAR2(100) NOT NULL,
+    PRIMARY KEY (Dept_num, Location),
+    FOREIGN KEY (Dept_num) REFERENCES Department(Dept_num) ON DELETE CASCADE
+);
+
+-- Creating Project Table
+CREATE TABLE Project (
+    Proj_num NUMBER PRIMARY KEY,
+    Proj_name VARCHAR2(100) NOT NULL,
+    Proj_location VARCHAR2(100),
+    Dept_num NUMBER NOT NULL,
+    FOREIGN KEY (Dept_num) REFERENCES Department(Dept_num) ON DELETE CASCADE
+);
+
+-- Creating Employee_Project Table
+CREATE TABLE Employee_Project (
+    Ssn NUMBER NOT NULL,
+    Proj_num NUMBER NOT NULL,
+    Hours NUMBER CHECK (Hours >= 0), -- Hours worked must be non-negative
+    PRIMARY KEY (Ssn, Proj_num),
+    FOREIGN KEY (Ssn) REFERENCES Employee(Ssn) ON DELETE CASCADE,
+    FOREIGN KEY (Proj_num) REFERENCES Project(Proj_num) ON DELETE CASCADE
+);
+
+-- Creating Dependent Table
+CREATE TABLE Dependent (
+    Ssn NUMBER NOT NULL,
+    Dept_name VARCHAR2(100) NOT NULL,
+    Gender CHAR(1) CHECK (Gender IN ('M', 'F')), -- Gender restricted to 'M' or 'F'
+    Bdate DATE CHECK (Bdate < SYSDATE), -- Dependent birth date must be in the past
+    Relationship VARCHAR2(50),
+    FOREIGN KEY (Ssn) REFERENCES Employee(Ssn) ON DELETE CASCADE,
+    FOREIGN KEY (Dept_name) REFERENCES Department(Dept_name) ON DELETE CASCADE
+);
+
+-- Inserting Sample Data
+-- Inserting into Department Table (must come first for foreign key dependencies)
+INSERT INTO Department VALUES (1, 'HR', NULL, TO_DATE('2020-01-01', 'YYYY-MM-DD'));
+INSERT INTO Department VALUES (2, 'Finance', NULL, TO_DATE('2019-07-01', 'YYYY-MM-DD'));
+INSERT INTO Department VALUES (3, 'IT', NULL, TO_DATE('2021-05-01', 'YYYY-MM-DD'));
+INSERT INTO Department VALUES (4, 'Marketing', NULL, TO_DATE('2020-10-01', 'YYYY-MM-DD'));
+INSERT INTO Department VALUES (5, 'Sales', NULL, TO_DATE('2018-03-01', 'YYYY-MM-DD'));
+
+-- Inserting into Employee Table
+INSERT INTO Employee VALUES ('John', 'A', 'Smith', 101, TO_DATE('1985-01-15', 'YYYY-MM-DD'), 'New York', 'M', 7000, NULL, 1);
+INSERT INTO Employee VALUES ('Jane', 'B', 'Doe', 102, TO_DATE('1992-03-22', 'YYYY-MM-DD'), 'Boston', 'F', 8000, 101, 2);
+INSERT INTO Employee VALUES ('Robert', 'C', 'Brown', 103, TO_DATE('1988-06-10', 'YYYY-MM-DD'), 'Chicago', 'M', 5500, 101, 3);
+INSERT INTO Employee VALUES ('Emily', 'D', 'Davis', 104, TO_DATE('1990-11-19', 'YYYY-MM-DD'), 'Los Angeles', 'F', 4000, NULL, 4);
+INSERT INTO Employee VALUES ('Michael', 'E', 'Wilson', 105, TO_DATE('1975-04-30', 'YYYY-MM-DD'), 'Houston', 'M', 9500, NULL, 5);
+
+-- Inserting into Department_Locations Table
+INSERT INTO Department_Locations VALUES (1, 'New York');
+INSERT INTO Department_Locations VALUES (2, 'Boston');
+INSERT INTO Department_Locations VALUES (3, 'Chicago');
+INSERT INTO Department_Locations VALUES (4, 'Los Angeles');
+INSERT INTO Department_Locations VALUES (5, 'Houston');
+
+-- Inserting into Project Table
+INSERT INTO Project VALUES (1, 'Alpha', 'New York', 1);
+INSERT INTO Project VALUES (2, 'Beta', 'Boston', 2);
+INSERT INTO Project VALUES (3, 'Gamma', 'Chicago', 3);
+INSERT INTO Project VALUES (4, 'Delta', 'Los Angeles', 4);
+INSERT INTO Project VALUES (5, 'Epsilon', 'Houston', 5);
+
+-- Inserting into Employee_Project Table
+INSERT INTO Employee_Project VALUES (101, 1, 40);
+INSERT INTO Employee_Project VALUES (102, 2, 35);
+INSERT INTO Employee_Project VALUES (103, 3, 30);
+INSERT INTO Employee_Project VALUES (104, 4, 25);
+INSERT INTO Employee_Project VALUES (105, 5, 20);
+
+-- Inserting into Dependent Table
+INSERT INTO Dependent VALUES (101, 'HR', 'M', TO_DATE('2010-05-15', 'YYYY-MM-DD'), 'Child');
+INSERT INTO Dependent VALUES (102, 'Finance', 'F', TO_DATE('2008-09-20', 'YYYY-MM-DD'), 'Spouse');
+INSERT INTO Dependent VALUES (103, 'IT
