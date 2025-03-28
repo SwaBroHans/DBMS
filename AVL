@@ -1,0 +1,140 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+// Definition of a node in AVL Tree
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+    int height;
+    
+    Node(int val) : data(val), left(nullptr), right(nullptr), height(1) {}
+};
+
+// Function to get the height of a node
+int height(Node* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+    return node->height;
+}
+
+// Function to get the balance factor of a node
+int balanceFactor(Node* node) {
+    if (node == nullptr) {
+        return 0;
+    }
+    return height(node->left) - height(node->right);
+}
+
+// Right rotation
+Node* rightRotate(Node* y) {
+    Node* x = y->left;
+    Node* T2 = x->right;
+
+    // Perform rotation
+    x->right = y;
+    y->left = T2;
+
+    // Update heights
+    y->height = max(height(y->left), height(y->right)) + 1;
+    x->height = max(height(x->left), height(x->right)) + 1;
+
+    return x; // New root
+}
+
+// Left rotation
+Node* leftRotate(Node* x) {
+    Node* y = x->right;
+    Node* T2 = y->left;
+
+    // Perform rotation
+    y->left = x;
+    x->right = T2;
+
+    // Update heights
+    x->height = max(height(x->left), height(x->right)) + 1;
+    y->height = max(height(y->left), height(y->right)) + 1;
+
+    return y; // New root
+}
+
+// Function to insert a node and return the new root of the subtree
+Node* insert(Node* node, int key) {
+    // Step 1: Perform the normal BST insert
+    if (node == nullptr) {
+        return new Node(key);
+    }
+
+    if (key < node->data) {
+        node->left = insert(node->left, key);
+    } else if (key > node->data) {
+        node->right = insert(node->right, key);
+    } else {
+        // Equal keys are not allowed in AVL tree
+        return node;
+    }
+
+    // Step 2: Update the height of this ancestor node
+    node->height = 1 + max(height(node->left), height(node->right));
+
+    // Step 3: Get the balance factor to check whether this node became unbalanced
+    int balance = balanceFactor(node);
+
+    // Step 4: If this node became unbalanced, then there are 4 cases
+
+    // Left Left Case
+    if (balance > 1 && key < node->left->data) {
+        return rightRotate(node);
+    }
+
+    // Right Right Case
+    if (balance < -1 && key > node->right->data) {
+        return leftRotate(node);
+    }
+
+    // Left Right Case
+    if (balance > 1 && key > node->left->data) {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+
+    // Right Left Case
+    if (balance < -1 && key < node->right->data) {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+
+    // Return the (unchanged) node pointer
+    return node;
+}
+
+// Function to do an inorder traversal of the AVL tree
+void inorder(Node* root) {
+    if (root != nullptr) {
+        inorder(root->left);
+        cout << root->data << " ";
+        inorder(root->right);
+    }
+}
+
+// Main function to test the AVL Tree implementation
+int main() {
+    Node* root = nullptr;
+
+    // Inserting values into the AVL tree
+    root = insert(root, 10);
+    root = insert(root, 20);
+    root = insert(root, 30);
+    root = insert(root, 15);
+    root = insert(root, 25);
+    root = insert(root, 5);
+
+    // Inorder traversal of the AVL tree
+    cout << "Inorder traversal of the AVL tree: ";
+    inorder(root);
+    cout << endl;
+
+    return 0;
+}
