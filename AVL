@@ -138,3 +138,18 @@ int main() {
 
     return 0;
 }
+
+
+
+Explanation:
+Node structure: Each node contains the data, pointers to left and right children, and the height.
+
+Height function: Computes the height of a given node.
+
+Balance factor function: Determines if the tree is balanced or not by comparing the height of the left and right subtrees.
+
+Rotations: The rightRotate and leftRotate functions are used to perform tree rotations when a node becomes unbalanced.
+
+Insert function: Inserts a new node into the AVL tree while ensuring that the tree remains balanced by performing rotations when necessary.
+
+Inorder traversal: The inorder function is used to print the elements of the tree in sorted order.
