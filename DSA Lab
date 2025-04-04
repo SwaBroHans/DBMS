@@ -1,0 +1,206 @@
+1. Single Inheritance
+#include <iostream>
+using namespace std;
+
+// Base class: Employee
+class Employee {
+public:
+    string name;
+    int id;
+
+    Employee(string name, int id) {
+        this->name = name;
+        this->id = id;
+    }
+
+    void showDetails() {
+        cout << "Employee Name: " << name << endl;
+        cout << "Employee ID: " << id << endl;
+    }
+};
+
+// Derived class: Manager
+class Manager : public Employee {
+public:
+    string department;
+
+    Manager(string name, int id, string department) : Employee(name, id) {
+        this->department = department;
+    }
+
+    void manage() {
+        cout << "Managing the " << department << " department." << endl;
+    }
+};
+
+int main() {
+    Manager manager("Alice", 101, "Sales"); // Create a Manager object
+    manager.showDetails();   // Access method from Employee class
+    manager.manage();        // Access method from Manager class
+
+    return 0;
+}
+
+2. Single Inheritance
+#include <iostream>
+using namespace std;
+
+// Base class: Book
+class Book {
+public:
+    string title;
+    string author;
+
+    Book(string title, string author) {
+        this->title = title;
+        this->author = author;
+    }
+
+    void showDetails() {
+        cout << "Book Title: " << title << endl;
+        cout << "Book Author: " << author << endl;
+    }
+};
+
+// Derived class: Magazine
+class Magazine : public Book {
+public:
+    int issueNumber;
+
+    Magazine(string title, string author, int issueNumber) : Book(title, author) {
+        this->issueNumber = issueNumber;
+    }
+
+    void showIssue() {
+        cout << "Magazine Issue Number: " << issueNumber << endl;
+    }
+};
+
+int main() {
+    Magazine mag("Tech Today", "John Doe", 42); // Create a Magazine object
+    mag.showDetails();     // Access method from Book class
+    mag.showIssue();       // Access method from Magazine class
+
+    return 0;
+}
+
+3.Multi Inheritance
+#include <iostream>
+using namespace std;
+
+// Base class: Employee
+class Employee {
+public:
+    string name;
+    int id;
+
+    Employee(string name, int id) {
+        this->name = name;
+        this->id = id;
+    }
+
+    void showDetails() {
+        cout << "Employee Name: " << name << endl;
+        cout << "Employee ID: " << id << endl;
+    }
+};
+
+// Derived class: Manager
+class Manager : public Employee {
+public:
+    Manager(string name, int id) : Employee(name, id) {}
+
+    void manageTeam() {
+        cout << "Managing a team of employees." << endl;
+    }
+};
+
+// Further derived class: TeamLead
+class TeamLead : public Manager {
+public:
+    TeamLead(string name, int id) : Manager(name, id) {}
+
+    void assignTasks() {
+        cout << "Assigning tasks to the team." << endl;
+    }
+};
+
+int main() {
+    TeamLead lead("Alice", 101); // Create a TeamLead object
+    lead.showDetails();          // Access Employee's method
+    lead.manageTeam();           // Access Manager's method
+    lead.assignTasks();          // Access TeamLead's method
+
+    return 0;
+}
+
+4.Hybrid Inheritance
+#include <iostream>
+using namespace std;
+
+// Base class 1: Person
+class Person {
+public:
+    string name;
+    int age;
+
+    Person(string name, int age) {
+        this->name = name;
+        this->age = age;
+    }
+
+    void showDetails() {
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+    }
+};
+
+// Base class 2: Student (inherits from Person)
+class Student : public Person {
+public:
+    string studentID;
+
+    Student(string name, int age, string studentID) : Person(name, age) {
+        this->studentID = studentID;
+    }
+
+    void study() {
+        cout << "Studying for exams." << endl;
+    }
+};
+
+// Base class 3: Teacher (inherits from Person)
+class Teacher : public Person {
+public:
+    string subject;
+
+    Teacher(string name, int age, string subject) : Person(name, age) {
+        this->subject = subject;
+    }
+
+    void teach() {
+        cout << "Teaching " << subject << "." << endl;
+    }
+};
+
+// Derived class: TeachingAssistant (inherits from both Student and Teacher)
+class TeachingAssistant : public Student, public Teacher {
+public:
+    TeachingAssistant(string name, int age, string studentID, string subject)
+        : Student(name, age, studentID), Teacher(name, age, subject) {}
+
+    void assist() {
+        cout << "Assisting the teacher with lectures." << endl;
+    }
+};
+
+int main() {
+    TeachingAssistant ta("John", 25, "S12345", "Computer Science");
+
+    ta.showDetails();  // Access method from Person
+    ta.study();        // Access method from Student
+    ta.teach();        // Access method from Teacher
+    ta.assist();       // Access method from TeachingAssistant
+
+    return 0;
+}
